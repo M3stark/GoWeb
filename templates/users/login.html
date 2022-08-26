@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>登陆</title>
+    <style>
+        * {
+            padding: 5px;
+            margin: 5px;
+        }
+
+        .input {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .submit {
+            text-align: center;
+            padding-left:40px;
+        }
+
+    </style>
+</head>
+<body>
+
+<!-- ref: https://www.jb51.net/article/220182.html-->
+<!--原始版本，使用from表单提交POST登陆请求，无返回数据-->
+
+<form action="/login" method="post" onsubmit="return check()">
+    <h2 style="text-align: center">登录</h2>
+    <ul>
+        <div class="input">
+            <li>
+                用户名：<input type="text" name="Username" id="username">
+            </li>
+            <li>
+                密&emsp;码：<input type="password" name="Password" id="password">
+            </li>
+
+        </div>
+
+        <div class="submit">
+            <li><input type=submit  value="登陆" ></li>
+            <li>还没有账号？<a href="register">点击注册</a></li>
+        </div>
+
+    </ul>
+</form>
+
+
+
+<script type="text/javascript">
+    function trim(str){ //删除左右两端的空格
+        return str.replace(/(^\s*)|(\s*$)/g, "");
+    }
+
+    function check() {
+        let username = document.getElementById("username").value;
+        let password = document.getElementById("password").value;
+        if((trim(username.value)==null || trim(username.value)==="")) {
+            alert("请输入用户名！");
+            username.focus();
+            return false;
+        }
+
+        if(trim(password.value)==null || trim(password.value)==="") {
+            alert("请输入密码！");
+            username.focus();
+            return false;
+        }
+
+        return true;
+    }
+</script>
+
+</body>
+</html>
+
