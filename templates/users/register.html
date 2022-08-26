@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>注册</title>
+    <style>
+        * {
+            padding: 5px;
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        .register {
+            text-align: center;
+            margin-top: 100px;
+        }
+
+        .register ul li input[type=text],
+        .register ul li input[type=password],
+        .register ul li input[type=email],
+        .register ul li input[type=phone],
+        .register ul li input[type=nickname] {
+            font-size: 15px;
+        }
+
+        .register ul li input {
+            width: 275px;
+            height: 40px;
+            margin-top: 15px;
+        }
+
+        .register ul li input[type=submit] {
+            width: 100px;
+            height: 40px;
+        }
+    </style>
+</head>
+<body>
+<div class="register">
+    <form id="register" action="/register" method="post" onsubmit="return check()">
+        <h2>注册</h2>
+        <ul>
+            <li>用户名：<input type="text" name="Username" id="username" required="required"></li>
+            <li>密&emsp;码：<input type="password" name="Password" id="password" required="required"></li>
+            <li>邮&emsp;箱：<input type="email" name="Email" id="email" required="required"></li>
+            <li>手机号：<input type="text" name="Mobile" id="mobile" required="required"></li>
+
+            <li><input type="submit" value="注册"></li>
+            <li>已有帐户？<a href="login">点击登录</a></li>
+        </ul>
+    </form>
+</div>
+
+<script type="text/javascript">
+    function trim(str){ //删除左右两端的空格
+        return str.replace(/(^\s*)|(\s*$)/g, "");
+    }
+
+    function check() {
+        let username = document.getElementById("username").value;
+        let password = document.getElementById("password").value;
+        let email = document.getElementById("email").value;
+        let mobile = document.getElementById("mobile").value;
+
+        if((trim(username.value)==null || trim(username.value)==="")) {
+            alert("请输入用户名！");
+            username.focus();
+            return false;
+        }
+
+        if(trim(password.value)==null || trim(password.value)==="") {
+            alert("请输入密码！");
+            password.focus();
+            return false;
+        }
+
+        if(trim(email.value)==null || trim(email.value)==="") {
+            alert("请输入邮箱！");
+            email.focus();
+            return false;
+        }
+
+        if(trim(mobile.value)==null || trim(mobile.value)==="") {
+            alert("请输入手机号！");
+            mobile.focus();
+            return false;
+        }
+
+        return true;
+    }
+</script>
+
+</body>
+</html>

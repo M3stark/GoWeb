@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>登陆</title>
+    <style>
+        * {
+            padding: 5px;
+            margin: 5px;
+            box-sizing: border-box;
+        }
+
+        .login {
+            text-align: center;
+            margin-top: 150px;
+        }
+
+        .login ul li input[type=text],
+        .login ul li input[type=password],
+        .login ul li input[type=captcha] {
+            font-size: 16px;
+        }
+
+        .login ul li input {
+            width: 275px;
+            height: 40px;
+            margin-top: 15px;
+        }
+
+        .login ul li input[type=button] {
+            width: 100px;
+            height: 40px;
+        }
+
+        div {
+            text-align: left;
+            padding-left:450px;
+        }
+
+
+    </style>
+</head>
+<body>
+
+<!-- ref: https://www.jb51.net/article/220182.html-->
+<!--获取from表单默认提交的返回值-->
+<div class="login">
+    <form target="from" action="/login" method="post">
+        <h2>登录</h2>
+        <ul>
+            <div>
+                <li>
+                    用户名：<input type="text" name="Username" id="username">
+                </li>
+                <li>
+                    密&emsp;码：<input type="password" name="Password" id="password">
+                </li>
+            </div>
+
+<!--            验证码-->
+            <div class="setCaptcha" >
+                <li>验证码：<input type="text" name="captcha" id="captcha"><img src="/captcha" onclick="this.src='/captcha?v='+Math.random()"></li>
+            </div>
+<!--                <li><input type=submit  value="登陆" ></li>-->
+                <li><button type=submit name="submit">登陆</button></li>
+
+            <li>还没有账号？<a href="register">点击注册</a></li>
+        </ul>
+    </form>
+</div>
+
+
+<script>
+    $(function () {
+        $("button[name='submit']").click(function () {
+            let username = document.getElementById("username").value;
+            let password = document.getElementById("password").value;
+            let captcha = document.getElementById("captcha").value;
+            console.log(username, password,captcha)
+            $.ajax({
+                type: "post",
+                url: "/login",
+                data: {"Username": username, "Password": password, "captcha" : captcha},
+                dataType: "application/json",
+                async: true,
+                success: function (res) {
+                    debugger
+                    console.log(res)
+                    if (res.code == 200) {
+                        sessionStorage.setItem('token', res.token)
+                    }
+                }
+            });
+        });
+    })
+</script>
+
+</body>
+</html>
+
