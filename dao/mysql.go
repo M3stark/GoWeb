@@ -10,7 +10,7 @@ var DB *gorm.DB
 
 // InitMySQL 初始化MySQL
 func InitMySQL() (err error) {
-	dsn := "root:sql_password@tcp(127.0.0.1:3306)/myWeb?charset=utf8mb4&parseTime=True&loc=Local"
+	dsn := "root:mysql_password@tcp(127.0.0.1:3306)/myWeb?charset=utf8mb4&parseTime=True&loc=Local"
 	DB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	return err
 }

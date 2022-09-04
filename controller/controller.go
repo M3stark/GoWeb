@@ -130,11 +130,29 @@ func RegisterHandler(context *gin.Context) {
 
 // Login 用户登陆页面
 func Login(context *gin.Context) {
+
+	session := sessions.Default(context)
+
+	// 如果已经是登陆状态，直接跳转到home page
+	//if session.Get("token") != nil {
+	//	context.Redirect(http.StatusMovedPermanently, "/home")
+	//	return
+	//}
+
+	// 获取sessionID
+	if session.ID() == "" {
+		// 这段仅仅是为了成功调用session.Save()，生成sessionID
+		tempMsg := "hello"
+		session.Set("genSessionId", tempMsg)
+		session.Save()
+	}
+
 	// Ref: https://segmentfault.com/q/1010000000308417
 	// 将登陆错误次数记录在 Redis 中，每次发起GET请求进入登陆页面，
 	// 登陆错误次数记为0
 	loginFailedCount := 0
-	err := dao.Redis.Set(context, "loginFailedCount", loginFailedCount, time.Minute*5).Err()
+	// 将session.ID()作为key，保存登陆错误次数
+	err := dao.Redis.Set(context, session.ID(), loginFailedCount, time.Minute*5).Err()
 	if err != nil {
 		context.JSON(http.StatusUnauthorized, gin.H{
 			"code": 401,
@@ -151,11 +169,17 @@ func Login(context *gin.Context) {
 
 // LoginHandler 用户登陆
 func LoginHandler(context *gin.Context) {
+	// 获取sessionID
+	session := sessions.Default(context)
+	if session.ID() == "" {
+		// 这段仅仅是为了成功调用session.Save()，生成sessionID
+		tempMsg := "hello"
+		session.Set("genSessionId", tempMsg)
+		session.Save()
+	}
 	// 从 Redis中取出登陆失败次数
-	loginFailedCount, _ := dao.Redis.Get(context, "loginFailedCount").Result()
-	//if getRedisErr != nil {
-	//	panic(getRedisErr)
-	//}
+	loginFailedCount, _ := dao.Redis.Get(context, session.ID()).Result()
+
 	failedCount, _ := strconv.Atoi(loginFailedCount)
 
 	LoginUser := models.User{}
@@ -182,7 +206,8 @@ func LoginHandler(context *gin.Context) {
 
 	if user.ID == 0 {
 		failedCount++ // 用户名不存在， 登陆错误+1
-		dao.Redis.Set(context, "loginFailedCount", failedCount, time.Minute*5)
+		fmt.Println("session ID (", session.ID(), "), 错误登陆次数：", failedCount)
+		dao.Redis.Set(context, session.ID(), failedCount, time.Minute*5)
 		if failedCount == 5 {
 			// 如果输错超过4次，重新加载页面，刷新验证码
 			context.HTML(http.StatusForbidden, "relogin.html", gin.H{
@@ -203,7 +228,8 @@ func LoginHandler(context *gin.Context) {
 	pErr := dao.DB.Where("password = ?", password).First(&user).Error
 	if errors.Is(pErr, gorm.ErrRecordNotFound) {
 		failedCount++ // 密码输入错误， 登陆错误+1
-		dao.Redis.Set(context, "loginFailedCount", failedCount, time.Minute*5)
+		fmt.Println("session ID (", session.ID(), "), 错误登陆次数：", failedCount)
+		dao.Redis.Set(context, session.ID(), failedCount, time.Minute*5)
 		if failedCount == 5 {
 			// 如果输错超过4次，重新加载页面，刷新验证码
 			context.HTML(http.StatusForbidden, "relogin.html", gin.H{
@@ -255,9 +281,11 @@ func LoginHandler(context *gin.Context) {
 	}
 
 	// 将token保存到session中
-	session := sessions.Default(context)
 	session.Set("token", token)
 	session.Save()
+
+	// 登陆成功，将 session.ID() 删除
+	_ = dao.Redis.Del(context, session.ID())
 
 	// 进入成功页面
 	context.JSON(http.StatusOK, gin.H{

@@ -38,8 +38,7 @@ func SetUpRouter() *gin.Engine {
 	engine.GET("/login", controller.Login)
 	engine.POST("/login", controller.LoginHandler)
 
-	//engine.Use(middleware.JWTAuth())
-
+	// home page
 	engine.GET("/home", middleware.JWTAuth(), controller.HomeHandler)
 
 	return engine

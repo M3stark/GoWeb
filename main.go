@@ -30,5 +30,5 @@ func main() {
 
 	router := routers.SetUpRouter()
 
-	router.Run()
+	router.Run(":8001")
 }
