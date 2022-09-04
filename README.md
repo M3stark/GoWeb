@@ -70,4 +70,4 @@
 
 登陆成功后，访问home page，解析浏览器缓存的token，得到用户名，打印到home page，实现jwt鉴权：
 
-<img src="/Users/zhengmike/Library/Application Support/typora-user-images/image-20220905020425558.png" alt="image-20220905020425558" style="zoom:50%;" />
+<img src="../home.png" alt="image-20220905020425558" style="zoom:50%;" />
